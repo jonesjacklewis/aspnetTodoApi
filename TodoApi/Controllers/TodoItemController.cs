@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+<<<<<<< HEAD
 using TodoApi.Data;
 using TodoApi.Models;
+=======
+>>>>>>> f144d73cbe33bed94335639591cbab2d39f0223c
 
 namespace TodoApi.Controllers
 {
