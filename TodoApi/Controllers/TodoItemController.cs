@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using TodoApi.Data;
+using TodoApi.Models;
 
 namespace TodoApi.Controllers
 {
@@ -31,14 +32,19 @@ namespace TodoApi.Controllers
         };
 
         private readonly ILogger<TodoItemController> _logger;
+        private readonly DataContext _dataContext;
 
-        public TodoItemController(ILogger<TodoItemController> logger)
+        public TodoItemController(ILogger<TodoItemController> logger, DataContext dataContext)
         {
             _logger = logger;
+            _dataContext = dataContext;
         }
 
+
+#pragma warning disable S1135 // Track uses of "TODO" tags - not sensible in this project
         // Post/Create/Add New Todo Item
         [HttpPost(Name = "AddNewTodoItem")]
+
         public void Post(TodoItemDTO todoItem)
         {
             IEnumerable<int> ids = TodoItems.Select(item => item.Id);
@@ -56,6 +62,8 @@ namespace TodoApi.Controllers
                 };
 
                 TodoItems.Add(newItem);
+                _dataContext.TodoItems.Add(newItem);
+                _dataContext.SaveChanges();
             }
             catch
             {
@@ -78,6 +86,74 @@ namespace TodoApi.Controllers
             return TodoItems.FirstOrDefault(x => x?.Id == id, null);
         }
 
+        // Partial Patch/Update a Todo Item
+        [HttpPatch("{id}",Name = "PatchTodoItem")]
+        public void Patch(int id, TodoItemDTO updatedItem)
+        {
+            try
+            {
+                TodoItem? currentItem = TodoItems.FirstOrDefault(x => x.Id == id);
+
+                if (currentItem == null) { return; }
+
+                TodoItems.Remove(currentItem);
+
+
+                if (currentItem.Created != DateTime.Parse(updatedItem.Created ?? ""))
+                {
+                    currentItem.Created = DateTime.Parse(updatedItem.Created ?? "");
+                }
+
+                if(currentItem.Title != updatedItem.Title)
+                {
+                    currentItem.Title = updatedItem.Title;
+                }
+
+                if(currentItem.IsComplete != updatedItem.IsComplete)
+                {
+                    currentItem.IsComplete = updatedItem.IsComplete;
+                }
+
+                TodoItems.Add(currentItem);
+
+            }
+            catch
+            {
+                // do nothing
+            }
+           
+        }
+
+        // Complete Put/Update of a Todo Item
+        [HttpPut("{id}", Name = "PatchTodoItem")]
+        public void Put(int id, TodoItemDTO updatedItem)
+        {
+            try
+            {
+                TodoItem? currentItem = TodoItems.FirstOrDefault(x => x.Id == id);
+
+                if (currentItem == null) { return; }
+
+                TodoItems.Remove(currentItem);
+
+                TodoItem updated = new()
+                {
+                    Id = id,
+                    Created = DateTime.Parse(updatedItem.Created ?? ""),
+                    Title = updatedItem.Title,
+                    IsComplete = updatedItem.IsComplete
+                };
+
+                TodoItems.Add(updated);
+
+
+            }
+            catch
+            {
+                return;
+            }
+        }
+
         // Delete all Todo Items
 
         [HttpDelete(Name = "DeleteAllTodoItems")]
@@ -87,6 +163,7 @@ namespace TodoApi.Controllers
         }
 
         // Delete a Todo Item
+#pragma warning restore S1135
         [HttpDelete("{id}", Name = "DeleteTodoItem")]
         public void Delete(int id)
         {
