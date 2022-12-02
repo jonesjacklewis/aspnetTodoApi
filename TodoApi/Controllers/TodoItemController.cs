@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-<<<<<<< HEAD
 using TodoApi.Data;
 using TodoApi.Models;
-=======
->>>>>>> f144d73cbe33bed94335639591cbab2d39f0223c
 
 namespace TodoApi.Controllers
 {
+
     [ApiController]
     [Route("[controller]")]
     public class TodoItemController : ControllerBase
@@ -34,13 +32,11 @@ namespace TodoApi.Controllers
             }
         };
 
-        private readonly ILogger<TodoItemController> _logger;
-        private readonly DataContext _dataContext;
+        private static TodoItemData _todoItemData;
 
-        public TodoItemController(ILogger<TodoItemController> logger, DataContext dataContext)
+        public TodoItemController(TodoItemData todoItemData)
         {
-            _logger = logger;
-            _dataContext = dataContext;
+            _todoItemData = todoItemData;
         }
 
 
@@ -65,8 +61,7 @@ namespace TodoApi.Controllers
                 };
 
                 TodoItems.Add(newItem);
-                _dataContext.TodoItems.Add(newItem);
-                _dataContext.SaveChanges();
+                _todoItemData.AddTodoItem(newItem);
             }
             catch
             {

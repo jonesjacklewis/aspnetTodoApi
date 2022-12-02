@@ -1,0 +1,13 @@
+﻿// Create Table
+
+CREATE TABLE IF NOT EXISTS "TodoItem" (
+	"id"	INTEGER NOT NULL,
+	"created"	TEXT NOT NULL,
+	"title"	TEXT,
+	"isComplete"	INTEGER NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+
+// Insert
+
+INSERT INTO "TodoItem" ("created", "title", "isComplete") VALUES ($created, $title, $isComplete)

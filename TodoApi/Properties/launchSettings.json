@@ -2,7 +2,7 @@
   "profiles": {
     "TodoApi": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\jones\\Documents\\Programming\\C#\\TodoApi\\TodoApi",
+      "workingDirectory": "C:\\Users\\jones\\Documents\\Programming\\C#\\aspnetTodoApi",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {

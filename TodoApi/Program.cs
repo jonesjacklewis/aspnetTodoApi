@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using TodoApi.Data;
 
 namespace TodoApi
@@ -9,7 +8,7 @@ namespace TodoApi
 
        private static IWebHostEnvironment? _HostEnvironment;
 
-        public Program(IWebHostEnvironment  hostEnv)
+        public Program(IWebHostEnvironment hostEnv)
         {
             _HostEnvironment = hostEnv;
         }
@@ -26,12 +25,7 @@ namespace TodoApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-
-            builder.Services.AddDbContext<DataContext>(
-                options => {
-                    options.UseSqlite($"Data Source={_HostEnvironment?.ContentRootPath}/data.db");
-                }
-                );
+            builder.Services.AddSingleton(x => new TodoItemData($"{Directory.GetCurrentDirectory()}\\database.db"));
 
             var app = builder.Build();
 
