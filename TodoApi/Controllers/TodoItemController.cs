@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TodoApi.Data;
 using TodoApi.Models;
 
@@ -44,7 +45,7 @@ namespace TodoApi.Controllers
         // Post/Create/Add New Todo Item
         [HttpPost(Name = "AddNewTodoItem")]
 
-        public void Post(TodoItemDTO todoItem)
+        public ActionResult Post(TodoItemDTO todoItem)
         {
             IEnumerable<int> ids = TodoItems.Select(item => item.Id);
             int currentId = ids.Max();
@@ -62,26 +63,36 @@ namespace TodoApi.Controllers
 
                 TodoItems.Add(newItem);
                 _todoItemData.AddTodoItem(newItem);
+                return new OkResult();
             }
             catch
             {
-                return;
+                return BadRequest();
             }
 
         }
 
         // Get/Retrieve All Todo Items
         [HttpGet(Name = "GetAllTodoItems")]
-        public IEnumerable<TodoItem> Get()
+        public ActionResult<IList<TodoItem>> Get()
         {
-            return TodoItems.ToArray();
+            var results = _todoItemData.GetAllTodoItems();
+
+            return new OkObjectResult(results);
         }
 
         // Get/Retrieve a Todo Item
         [HttpGet("{id}", Name = "GetTodoItem")]
-        public TodoItem? Get(int id)
+        public ActionResult<TodoItem> Get(int id)
         {
-            return TodoItems.FirstOrDefault(x => x?.Id == id, null);
+            var item = _todoItemData.GetTodoItem(id);
+
+            if (item == null)
+            {
+                return NoContent();
+            }
+
+            return item;
         }
 
         // Partial Patch/Update a Todo Item

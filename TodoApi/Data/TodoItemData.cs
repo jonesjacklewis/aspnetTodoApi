@@ -72,5 +72,90 @@ namespace TodoApi.Data
             }
             
         }
+
+        public IList<TodoItem> GetAllTodoItems()
+        {
+            try
+            {
+                using var connection = new SqliteConnection(_connectionString);
+                connection.Open();
+
+                SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_e_sqlite3());
+
+                var command = connection.CreateCommand();
+
+                command.CommandText = @"SELECT id, created, title, isComplete FROM ""TodoItem""";
+
+                List<TodoItem> items = new();
+
+                using var reader = command.ExecuteReader();
+                
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32(0);
+                    DateTime created = reader.GetDateTime(1);
+                    string title = reader.GetString(2);
+                    bool isComplete = reader.GetBoolean(3);
+
+                    TodoItem todoItem = new()
+                    {
+                        Id = id,
+                        Created = created,
+                        Title = title,
+                        IsComplete = isComplete
+                    };
+
+                    items.Add(todoItem);
+                }
+
+                return items;
+            }
+            catch
+            {
+                return new List<TodoItem>();
+            }
+        }
+
+        public TodoItem GetTodoItem(int id)
+        {
+            try
+            {
+                using var connection = new SqliteConnection(_connectionString);
+
+                SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_e_sqlite3());
+
+                connection.Open();
+
+                var command = connection.CreateCommand();
+
+                command.CommandText = @"SELECT 
+                                    created, title, isComplete 
+                                    FROM ""TodoItem"" 
+                                    WHERE id = $id
+                                    LIMIT 1";
+
+                command.Parameters.AddWithValue("$id", id);
+
+                using var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                DateTime created = reader.GetDateTime(0);
+                string title = reader.GetString(1);
+                bool isComplete = reader.GetBoolean(2);
+
+                return new TodoItem()
+                {
+                    Id = id,
+                    Created = created,
+                    Title = title,
+                    IsComplete = isComplete
+                };
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

@@ -5,14 +5,6 @@ namespace TodoApi
  
     public class Program
     {
-
-       private static IWebHostEnvironment? _HostEnvironment;
-
-        public Program(IWebHostEnvironment hostEnv)
-        {
-            _HostEnvironment = hostEnv;
-        }
-
         private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);

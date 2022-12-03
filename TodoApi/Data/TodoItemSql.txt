@@ -11,3 +11,15 @@ CREATE TABLE IF NOT EXISTS "TodoItem" (
 // Insert
 
 INSERT INTO "TodoItem" ("created", "title", "isComplete") VALUES ($created, $title, $isComplete)
+
+// SELECT
+
+SELECT id, created, title, isComplete FROM "TodoItem"
+
+// select one
+
+SELECT 
+id, created, title, isComplete 
+FROM "TodoItem" 
+WHERE id = $id
+LIMIT 1
